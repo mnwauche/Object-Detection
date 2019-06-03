@@ -3,20 +3,26 @@ import cv2 as cv
 import time
 import tensorflow as tf
 
-
+CAM_CONF = False
+c_width = 0
+c_height = 0
+c_fps = 0
 cap = cv.VideoCapture(-1)
+    
+if CAM_CONF:   
 #frame width
-cap.set(3,320)
+    cap.set(3,c_width)
 #frame height
-cap.set(4,240)
+    cap.set(4,c_height)
 #frames per second
-cap.set(5,30)
+    cap.set(5,c_fps)
 #saturation
-#cap.set(12,0)
+    #cap.set(12,0)
 #convert rgb
-#cap.set(16,1)
-print('convert rgb:')
-print(cap.get(16))
+    #cap.set(16,1)
+    
+print('width, height, fps, convert rgb:')
+print(str(cap.get(3)) + ', ' + str(cap.get(4)) + ', ' + str(cap.get(5)) + ', ' + str(cap.get(16)))
 
 # Read the graph.
 with tf.gfile.FastGFile('ssdlite_mnet.pb', 'rb') as f:
