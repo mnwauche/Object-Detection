@@ -4,6 +4,8 @@ import time
 import tensorflow as tf
 
 CAM_CONF = False
+TPU = False
+
 c_width = 0
 c_height = 0
 c_fps = 0
@@ -24,23 +26,15 @@ if CAM_CONF:
 print('width, height, fps, convert rgb:')
 print(str(cap.get(3)) + ', ' + str(cap.get(4)) + ', ' + str(cap.get(5)) + ', ' + str(cap.get(16)))
 
-# Read the graph.
-with tf.gfile.FastGFile('ssdlite_mnet.pb', 'rb') as f:
-    graph_def = tf.GraphDef()
-    graph_def.ParseFromString(f.read())
-    
 #load labels
 labels_path = 'parsed_labels.txt'
 label_file = open(labels_path, 'r')
 labels = eval(label_file.read())
 label_file.close()
 print('labels loaded')
-    
-#load tensorflow model into memory
-sess = tf.Session()
-sess.graph.as_default()
-tf.import_graph_def(graph_def, name='')
-print('tf model loaded')
+
+sess = None
+graph_def = None
 
 #ticks/sec
 freq = cv.getTickFrequency()
@@ -49,7 +43,21 @@ frame_rate = 1
 
 model_times = []
 f_rates = []
-    
+
+if not TPU:
+    # Read the graph.
+    with tf.gfile.FastGFile('ssdlite_mnet.pb', 'rb') as f:
+        graph_def = tf.GraphDef()
+        graph_def.ParseFromString(f.read())
+        
+    #load tensorflow model into memory
+    sess = tf.Session()
+    sess.graph.as_default()
+    tf.import_graph_def(graph_def, name='')
+    print('tf model loaded')
+else:
+    pass
+
 while(True):
     
     # Capture frame-by-frame
