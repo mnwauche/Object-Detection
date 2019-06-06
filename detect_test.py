@@ -105,13 +105,15 @@ while(True):
     
     # Visualize detected bounding boxes.
     # loop over the results
-
+    car_detect = 0
     if TPU:
         for r in results:
             # extract the bounding box and box and predicted class label
             box = r.bounding_box.flatten().astype("int")
             (startX, startY, endX, endY) = box
             label = labels[r.label_id]
+            if label == 'car':
+                car_detect = 1
 
             # draw the bounding box and label on the image
             cv.rectangle(img, (startX, startY), (endX, endY), (0, 255, 0), 2)
@@ -132,9 +134,13 @@ while(True):
                 bottom = bbox[2] * rows
                 cv.rectangle(img, (int(x), int(y)), (int(right), int(bottom)), (125, 255, 51), thickness=2)
                 label = labels[classId]
+                if label == 'car':
+                    car_detect = 1
                 textY = y - 15 if y - 15 > 15 else y + 15
                 text = "{}: {:.2f}%".format(label, score * 100)
                 cv.putText(img, text, (int(x), int(textY)), font, .5, (0, 255, 0), 2)
+                
+    print(car_detect)
                 
     cv.putText(img, "FPS: {0:.2f}".format(frame_rate), (30,50), font, .5, (255,255,0), 2,cv.LINE_AA) 
     cv.imshow('TensorFlow MobileNet-SSD', img)
@@ -142,7 +148,7 @@ while(True):
     frame_e = time.time()
     frame_rate = 1/(frame_e - frame_s)
     f_rates.append(frame_rate)
-    
+        
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
