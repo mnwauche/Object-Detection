@@ -33,14 +33,14 @@ labels = {}
 
 if TPU:
     i = 0
-    for row in open('lite_labelmap.txt'):
+    for row in open('labels/lite_labelmap.txt'):
         # unpack the row and update the labels dictionary
         label = row.strip()
         labels[int(i)] = label.strip()
         i += 1
 else:
     #load labels
-    labels_path = 'parsed_labels.txt'
+    labels_path = 'labels/parsed_labels.txt'
     label_file = open(labels_path, 'r')
     labels = eval(label_file.read())
     label_file.close()
@@ -60,10 +60,10 @@ f_rates = []
 if TPU:
     from edgetpu.detection.engine import DetectionEngine
     from PIL import Image
-    model = DetectionEngine('detect.tflite')
+    model = DetectionEngine('tflite-models/coral_objdtct_mnet_ssd_v1.tflite')
 else:
     # Read the graph.
-    with tf.gfile.FastGFile('ssdlite_mnet.pb', 'rb') as f:
+    with tf.gfile.FastGFile('models/ssdlite_mnet.pb', 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         
